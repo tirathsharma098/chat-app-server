@@ -9,6 +9,8 @@ import {
 import Chat from "./Chat.entity";
 import Message from "./Message.entity";
 import Token from "./Token.entity";
+import UserChat from "./UserChat.entity";
+import ReadBy from "./UserReadby.entity";
 
 @Entity("users")
 export default class User {
@@ -33,8 +35,8 @@ export default class User {
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     last_login: Date;
 
-    @OneToMany(() => Chat, chat => chat.user)
-    userChat: Chat[];
+    @OneToMany(() => UserChat, chat => chat.users)
+    userChat: UserChat[];
 
     @OneToMany(() => Chat, chat => chat.groupAdminUser)
     groupAdminChat: Chat[];
@@ -54,4 +56,7 @@ export default class User {
 
     @OneToMany(() => Token, token => token.userCreatedToken)
     userToken: Token[];
+
+    @OneToMany(() => ReadBy, readby => readby.userReadby)
+    readybyUser: ReadBy[];
 }

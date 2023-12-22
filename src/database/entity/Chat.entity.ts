@@ -4,32 +4,34 @@ import {
     Entity,
     JoinColumn,
     ManyToOne,
+    OneToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
 import User from "./User.entity";
 import Message from "./Message.entity";
+import UserChat from "./UserChat.entity";
 
 @Entity("chats")
 export default class Chat {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column({nullable: false, length: 100})
+    @Column({ length: 100, nullable: true })
     chat_name: string;
 
-    @Column({type: 'boolean', nullable: false })
+    @Column({ type: "boolean", default: false })
     is_group_chat: string;
 
-    @ManyToOne(() => User, (user) => user.userChat)
-    @JoinColumn({ name: "user_id" })
-    user: User;
+    @OneToMany(() => UserChat, chat => chat.chats)
+    userChat: UserChat[];
 
-    @ManyToOne(() => Message, (message) => message.userChat)
-    @JoinColumn({ name: "message_id" })
-    chatMessage: Message;
+    @OneToOne(() => Message, latest => latest.latestChat, { nullable: true })
+    @JoinColumn({ name: "latest_chat_id" })
+    latestMessage: Message;
 
-    @ManyToOne(() => User, (user) => user.groupAdminChat)
+    @ManyToOne(() => User, user => user.groupAdminChat, { nullable: true })
     @JoinColumn({ name: "admin_id" })
     groupAdminUser: User;
 
@@ -42,4 +44,7 @@ export default class Chat {
         type: "timestamp",
     })
     updated_at: Date;
+
+    @OneToMany(() => Message, message => message.userChat)
+    chatMessage: Message[];
 }

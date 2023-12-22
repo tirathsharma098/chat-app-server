@@ -7,6 +7,7 @@ import { ValidateUser } from "../../utils/validateUser";
 // Importing All routes
 import notFound from "./notFoundRoute";
 import userRoute from './userRoute'
+import chatRoute from './chatRoute';
 // import { catchAsync } from "../../utils/catchAsync";
 
 // Validating token secret
@@ -26,7 +27,7 @@ router.use(
 router.use('/user', userRoute);
 router.use(ValidateUser.controller);
 // All version v1 routes
-
+router.use('/chat', chatRoute);
 // Page not found route
 router.all("*", notFound);
 
