@@ -52,7 +52,7 @@ const appServer = app.listen(PORT, () =>
 const io = new Server(appServer, {
     pingTimeout: 60000,
     cors: {
-        origin: "http://localhost:3000",
+        origin: process.env.CLIENT_DOMAIN,
     }
 });
 socketConnection(io);
