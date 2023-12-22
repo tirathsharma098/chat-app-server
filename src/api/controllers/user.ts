@@ -187,7 +187,7 @@ const userLogout = {
 const getAllUserDropdown = {
     [CONTROLLER]: async (req, res) => {
         const userRepo = AppDataSource.getRepository(User);
-        const allUser = userRepo.find({
+        const allUser = await userRepo.find({
             where: { id: Not(req.currentUser.id) },
             select: { id: true, full_name: true, username: true },
         });
