@@ -132,11 +132,13 @@ const sendPrivateMessage = {
         const content = req.body.content;
         const messageRepo = AppDataSource.getRepository(Message);
         const readyByRepo = AppDataSource.getRepository(UserReadby);
+        const chatRepo = AppDataSource.getRepository(Chat);
         const messageSaved = await messageRepo.save({
             messageSender: req.currentUser.id,
             content,
             userChat: chat_id,
         });
+        await chatRepo.save({ id: chat_id, latestMessage: messageSaved });
         await readyByRepo.save({
             messageReadby: messageSaved,
             userReadby: req.currentUser.id,
@@ -150,4 +152,29 @@ const sendPrivateMessage = {
         );
     },
 };
-export { getAllMessages, sendPrivateMessage };
+
+const getAllMyChatList = {
+    [CONTROLLER]: async (req, res) => {
+        const chatRepo = AppDataSource.getRepository(Chat);
+        const chatsFound = await chatRepo.query(
+            `select c.id,c.chat_name , c.is_group_chat, c.admin_id, c.created_at, c.updated_at, m."content", u.full_name, u.id as user_id, u.username
+            from chats c
+            join user_chats uc on c.id = uc.chat_id
+            left join messages m on m.id = c.latest_chat_id
+            left join users u ON uc.user_id = u.id
+            where c.is_group_chat = 'false' 
+            and uc.user_id != '${req.currentUser.id}' and uc.chat_id in (select uc2.chat_id 
+            from user_chats uc2 
+            where uc2.user_id = '${req.currentUser.id}');`
+        );
+        return sendResponse(
+            res,
+            chatsFound,
+            "Message saved successfully",
+            true,
+            httpStatus.OK
+        );
+    },
+};
+
+export { getAllMessages, sendPrivateMessage, getAllMyChatList };

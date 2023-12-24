@@ -3,6 +3,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import {
     // createNewChat,
     getAllMessages,
+    getAllMyChatList,
     sendPrivateMessage,
 } from "../controllers/chat";
 const router = express.Router();
@@ -22,4 +23,5 @@ router.post(
     sendPrivateMessage.validator,
     catchAsync(sendPrivateMessage.controller)
 );
+router.get("/get-my-all-chat", catchAsync(getAllMyChatList.controller));
 export default router;
