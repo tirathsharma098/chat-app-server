@@ -123,7 +123,7 @@ const sendPrivateMessage = {
             .required(),
         body: Joi.object()
             .keys({
-                content: Joi.string().required(),
+                content: Joi.string().trim().required(),
             })
             .required(),
     }),
